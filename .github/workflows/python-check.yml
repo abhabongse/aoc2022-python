@@ -68,4 +68,4 @@ jobs:
         run: poetry install --no-interaction
       - name: Run flake8
         run: |
-          poetry run flake8 -v
+          poetry run flake8 -v --application-import-names $(find src -maxdepth 2 -name '__init__.py' -printf '%h\n' | sed 's/^src\///' | paste -sd "," -)
