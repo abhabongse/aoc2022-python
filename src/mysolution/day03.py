@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+"""Solution to Day 3: Rucksack Reorganization
+https://adventofcode.com/2022/day/3
+"""
+from __future__ import annotations
+
+import dataclasses
+from typing import TextIO
+
+import more_itertools
+from rich import print
+
+from mysolution.helpers.cli import command_with_input_file, open_input_file
+
+
+@command_with_input_file
+def program(input_file):
+    """Main program.
+    """
+    with open_input_file(input_file) as fobj:
+        rucksacks = read_input(fobj)
+
+    # Part 1: sum of priorities for item types that appear in
+    # both compartments of each rucksack
+    p1_sum_priorities = sum(
+        item_priority(item_type)
+        for rucksack in rucksacks
+        for item_type in set(rucksack.fst_compartment) & set(rucksack.snd_compartment)
+    )
+    print("Part 1:", p1_sum_priorities)
+
+    # Part 2: sum of priorities for item types that appear in
+    # each group of three consecutive rucksacks
+    p2_sum_priorities = sum(
+        item_priority(item_type)
+        for chunk in more_itertools.chunked(rucksacks, n=3, strict=True)
+        for item_type in set(chunk[0].content) & set(chunk[1].content) & set(chunk[2].content)
+    )
+    print("Part 2:", p2_sum_priorities)
+
+
+def read_input(fobj: TextIO) -> list[Rucksack]:
+    """Reads and parses input file according to problem statement.
+    """
+    return [Rucksack(content=line) for line in fobj]
+
+
+@dataclasses.dataclass
+class Rucksack:
+    """Information for each rucksack.
+    """
+    content: str
+
+    def __post_init__(self):
+        self.content = self.content.strip()
+
+    @property
+    def fst_compartment(self) -> str:
+        length = len(self.content) // 2
+        return self.content[:length]
+
+    @property
+    def snd_compartment(self) -> str:
+        length = len(self.content) // 2
+        return self.content[length:]
+
+
+def item_priority(item_type: str) -> int:
+    """Priority based on the given item type.
+    """
+    if 'a' <= item_type <= 'z':
+        return ord(item_type) - ord('a') + 1
+    if 'A' <= item_type <= 'Z':
+        return ord(item_type) - ord('A') + 27
+    raise ValueError("unrecognized item type")
+
+
+if __name__ == '__main__':
+    program()

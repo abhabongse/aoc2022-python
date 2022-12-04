@@ -48,7 +48,7 @@ def read_input(fobj: TextIO) -> list[RoundStrategy]:
 
 @dataclasses.dataclass(frozen=True)
 class RoundStrategy:
-    """Information associated with a single elf.
+    """Strategy information for a single round of Rock Paper Scissors.
     """
     #: First column character
     fst: str
