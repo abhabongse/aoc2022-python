@@ -1,6 +1,13 @@
-# Python Project Template
+# Project Environment Setup
 
-Template for python project structure (with annotations).
+The easiest way to set up a runtime environment in the local machine is to
+
+1. Ensure that you have the most updated version of `pip>=22.0.0`
+2. Create a new virtual environment with any method you like
+3. Simply execute `pip install` without any additional arguments
+
+Otherwise, if you want a more robust development setup,
+see the rest of this documentation.
 
 ## Features
 

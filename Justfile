@@ -21,23 +21,12 @@ export-python-packages:
 #                                               |__/
 
 # Run tests against source files (flake8 and pytest)
-test: flake8 pytest
+test: flake8
 
 # Run flake8 linter against source files
 flake8:
     poetry run flake8 -v \
         --application-import-names $(find src -maxdepth 2 -name '__init__.py' -printf '%h\n' | sed 's/^src\///' | paste -sd "," -)
-
-# Run pytest against source files
-pytest +ARGS='-v':
-    poetry run python -m pytest {{ARGS}}
-
-# Run pytest with line coverage checks
-coverage +ARGS='-v':
-    @echo Python packages: $(find src -maxdepth 2 -name '__init__.py' -printf '%h\n' | sed 's/^src\///')
-    poetry run python -m pytest \
-        $(find src -maxdepth 2 -name '__init__.py' -printf '%h\n' | sed 's/^src\//--cov=/') \
-        --cov-report=term-missing {{ARGS}}
 
 # Clear out all test files
 cleantest:
