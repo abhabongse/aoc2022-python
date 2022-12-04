@@ -5,7 +5,7 @@ https://adventofcode.com/2022/day/3
 from __future__ import annotations
 
 import dataclasses
-from typing import TextIO
+from typing import Self, TextIO
 
 import more_itertools
 from rich import print
@@ -42,17 +42,18 @@ def program(input_file):
 def read_input(fobj: TextIO) -> list[Rucksack]:
     """Reads and parses input file according to problem statement.
     """
-    return [Rucksack(content=line) for line in fobj]
+    return [Rucksack.from_str(line) for line in fobj]
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class Rucksack:
     """Information for each rucksack.
     """
     content: str
 
-    def __post_init__(self):
-        self.content = self.content.strip()
+    @classmethod
+    def from_str(cls, s: str) -> Self:
+        return cls(content=s.strip())
 
     @property
     def fst_compartment(self) -> str:
