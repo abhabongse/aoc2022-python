@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""Solution to Day 1: Calorie Counting
+https://adventofcode.com/2022/day/1
+"""
 from __future__ import annotations
 
 import dataclasses
@@ -29,6 +32,16 @@ def program(input_file):
     print("Part 2:", p2_calories)
 
 
+def read_input(fobj: TextIO) -> list[Elf]:
+    """Reads and parses input file according to problem statement.
+    """
+    calories_groups = more_itertools.split_at(fobj, lambda line: not line.strip())
+    return [
+        Elf(calories=[int(calorie) for calorie in calories])
+        for calories in calories_groups
+    ]
+
+
 @dataclasses.dataclass(frozen=True)
 class Elf:
     """Information associated with a single elf.
@@ -39,16 +52,6 @@ class Elf:
     @cached_property
     def total_calories(self) -> int:
         return sum(self.calories)
-
-
-def read_input(fobj: TextIO) -> list[Elf]:
-    """Reads and parses input file according to problem statement.
-    """
-    calories_groups = more_itertools.split_at(fobj, lambda line: not line.strip())
-    return [
-        Elf(calories=[int(calorie) for calorie in calories])
-        for calories in calories_groups
-    ]
 
 
 if __name__ == '__main__':
