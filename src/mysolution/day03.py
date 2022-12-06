@@ -12,6 +12,9 @@ from rich import print
 
 from mysolution.helpers.cli import command_with_input_file, open_input_file
 
+#: Item types where the i-th item has the priority value i
+ITEM_BY_PRIORITIES = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 
 @command_with_input_file
 def program(input_file):
@@ -20,8 +23,8 @@ def program(input_file):
     with open_input_file(input_file) as fobj:
         rucksacks = read_input(fobj)
 
-    # Part 1: sum of priorities for item types that appear in
-    # both compartments of each rucksack
+    # Part 1: sum of priorities for item types
+    # that appear in both compartments of each rucksack
     p1_sum_priorities = sum(
         item_priority(item_type)
         for rucksack in rucksacks
@@ -29,8 +32,8 @@ def program(input_file):
     )
     print("Part 1:", p1_sum_priorities)
 
-    # Part 2: sum of priorities for item types that appear in
-    # each group of three consecutive rucksacks
+    # Part 2: sum of priorities for item types
+    # that appear in each group of three consecutive rucksacks
     p2_sum_priorities = sum(
         item_priority(item_type)
         for chunk in more_itertools.chunked(rucksacks, n=3, strict=True)
@@ -69,11 +72,7 @@ class Rucksack:
 def item_priority(item_type: str) -> int:
     """Priority based on the given item type.
     """
-    if 'a' <= item_type <= 'z':
-        return ord(item_type) - ord('a') + 1
-    if 'A' <= item_type <= 'Z':
-        return ord(item_type) - ord('A') + 27
-    raise ValueError("unrecognized item type")
+    return ITEM_BY_PRIORITIES.index(item_type)
 
 
 if __name__ == '__main__':
