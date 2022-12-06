@@ -16,9 +16,10 @@ from rich import print
 from mysolution.helpers.cli import command_with_input_file, open_input_file
 
 #: Mapping from stack number to a list representing a stack of crates
+#: where the first item in then list corresponds to the bottom of the stack, etc.
 StackConfig: TypeAlias = dict[str, list[str]]
 
-REARRANGE_OP_RE = re.compile(r'move (?P<amount>\d+) from (?P<src>\d+) to (?P<dest>\d+)')
+REARRANGE_OP_RE = re.compile(r'move (?P<count>\d+) from (?P<src>\d+) to (?P<dest>\d+)')
 
 
 @command_with_input_file
@@ -58,40 +59,45 @@ def read_input(fobj: TextIO) -> tuple[StackConfig, list[RearrangeOp]]:
 
 @dataclasses.dataclass(frozen=True)
 class RearrangeOp:
-    amount: int
+    """A rearrangement operation to move the given number (count) of crates
+    from the source stack pile (src) to the destination stack pile (dest).
+    """
+    count: int
     src: str
     dest: str
 
     @classmethod
     def from_str(cls, s: str) -> Self:
         data = REARRANGE_OP_RE.fullmatch(s.strip()).groupdict()
-        return cls(amount=int(data['amount']), src=data['src'], dest=data['dest'])
+        return cls(count=int(data['count']), src=data['src'], dest=data['dest'])
 
 
-def simulate_cratemover_9000(stack_config: StackConfig, rearrange_ops: Sequence[RearrangeOp]) -> StackConfig:
+def simulate_cratemover_9000(config: StackConfig, rearrange_ops: Sequence[RearrangeOp]) -> StackConfig:
     """Simulates CrateMover 9000: moves one crate at a time.
+    See problem statement for a thorough description of this machine.
     """
-    world = copy.deepcopy(stack_config)
+    config = copy.deepcopy(config)
     for op in rearrange_ops:
-        for _ in range(op.amount):
-            crate = world[op.src].pop()
-            world[op.dest].append(crate)
-    return world
+        for _ in range(op.count):
+            crate = config[op.src].pop()
+            config[op.dest].append(crate)
+    return config
 
 
-def simulate_cratemover_9001(stack_config: StackConfig, rearrange_ops: Sequence[RearrangeOp]) -> StackConfig:
-    """Simulates CrateMover 9000: moves one crate at a time.
+def simulate_cratemover_9001(config: StackConfig, rearrange_ops: Sequence[RearrangeOp]) -> StackConfig:
+    """Simulates CrateMover 9000: moves multiple crates at once.
+    See problem statement for a thorough description of this machine.
     """
-    world = copy.deepcopy(stack_config)
+    config = copy.deepcopy(config)
     aux = []  # achieves reverse-stack behavior by introducing auxiliary stack
     for op in rearrange_ops:
-        for _ in range(op.amount):
-            crate = world[op.src].pop()
-            aux.append(crate)
-        for _ in range(op.amount):
-            crate = aux.pop()
-            world[op.dest].append(crate)
-    return world
+        for _ in range(op.count):
+            crate = config[op.src].pop()
+            aux.append(crate)  # temporary move to auxiliary stack
+        for _ in range(op.count):
+            crate = aux.pop()  # now move them to destination
+            config[op.dest].append(crate)
+    return config
 
 
 if __name__ == '__main__':
