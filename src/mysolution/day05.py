@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Solution to Day 4: Camp Cleanup
+"""Solution to Day 5: Supply Stacks
 https://adventofcode.com/2022/day/5
 """
 from __future__ import annotations
@@ -34,7 +34,7 @@ def program(input_file):
     p1_desired_crates = ''.join(crates[-1] for crates in final_config.values())
     print("Part 1:", p1_desired_crates)
 
-    # Part 1: Rearrange crates by CrateMover 9001
+    # Part 2: Rearrange crates by CrateMover 9001
     final_config = simulate_cratemover_9001(stack_config, rearrange_ops)
     p2_desired_crates = ''.join(crates[-1] for crates in final_config.values())
     print("Part 2:", p2_desired_crates)
