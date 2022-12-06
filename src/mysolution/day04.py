@@ -20,19 +20,17 @@ def program(input_file):
         assignment_pairs = read_input(fobj)
 
     # Part 1: count assignment pairs where one fully contains the other
-    fully_contains_assignments = [
-        pair for pair in assignment_pairs
-        if pair.fst.contains(pair.snd) or pair.snd.contains(pair.fst)
-    ]
-    p1_count = len(fully_contains_assignments)
+    p1_count = sum(
+        fst.contains(snd) or snd.contains(fst)
+        for fst, snd in assignment_pairs
+    )
     print("Part 1:", p1_count)
 
-    # Part 2: count assignments where two overlap
-    overlapped_assignments = [
-        pair for pair in assignment_pairs
-        if pair.fst.overlaps(pair.snd)
-    ]
-    p2_count = len(overlapped_assignments)
+    # Part 2: count overlapping assignment pairs
+    p2_count = sum(
+        fst.overlaps(snd)  # already symmetric
+        for fst, snd in assignment_pairs
+    )
     print("Part 2:", p2_count)
 
 
@@ -51,6 +49,12 @@ class AssignmentPair:
     def from_str(cls, s: str) -> Self:
         fst, snd = s.split(',')
         return cls(fst=SectionRange.from_str(fst), snd=SectionRange.from_str(snd))
+
+    def __iter__(self):
+        """Allows instance attributes destructuring via tuple assignments.
+        """
+        yield self.fst
+        yield self.snd
 
 
 @dataclasses.dataclass(frozen=True)
