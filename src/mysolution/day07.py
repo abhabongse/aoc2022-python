@@ -101,7 +101,7 @@ def list_file_sizes(histories: Sequence[History]) -> dict[Path, int]:
 
 def compute_dir_sizes(file_sizes: Mapping[Path, int]) -> collections.defaultdict[Path, int]:
     """Computes the mapping of container directories to their sizes
-    based on the files sizes information.
+    based on the files sizes information returned by `list_file_sizes`.
     """
     dir_sizes = collections.defaultdict(int)
     for path, size in file_sizes.items():
