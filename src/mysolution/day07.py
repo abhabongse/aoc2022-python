@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """Solution to Day 7: No Space Left On Device
 https://adventofcode.com/2022/day/7
+
+Implementation Note: would be better to use a parser generator to handle input instead
 """
 from __future__ import annotations
 
+import collections
 import dataclasses
-import operator
 from collections.abc import Sequence
-from typing import TextIO, TypeAlias
+from typing import Mapping, TextIO, TypeAlias
 
 import more_itertools
 from rich import print
-from rich.pretty import pprint
 
 from mysolution.helpers.cli import command_with_input_file, open_input_file
 
@@ -27,11 +28,22 @@ def program(input_file):
 
     # Part 1: directories with total size at most 100_000
     file_sizes = list_file_sizes(histories)
-    pprint(file_sizes)
-    print("Part 1:", ...)
+    dir_sizes = compute_dir_sizes(file_sizes)
+    p1_sum_of_total_sizes = sum(
+        size for size in dir_sizes.values()
+        if size <= 100_000
+    )
+    print("Part 1:", p1_sum_of_total_sizes)
 
-    # Part 2:
-    print("Part 2:", ...)
+    # Part 2: find directory just large enough to remove so that
+    # there is enough available space to system upgrade
+    current_usage = dir_sizes[()]
+    space_to_remove = current_usage - 40_000_000
+    p2_matched_size = min(
+        size for size in dir_sizes.values()
+        if size >= space_to_remove
+    )
+    print("Part 2:", p2_matched_size)
 
 
 def read_input(fobj: TextIO) -> list[History]:
@@ -57,20 +69,11 @@ class History:
     results: list[str]
 
 
-@dataclasses.dataclass(frozen=True)
-class FileSize:
-    """Full path and size of a single file.
+def list_file_sizes(histories: Sequence[History]) -> dict[Path, int]:
+    """Obtains the mapping of file paths to their sizes
+    based on the list of command histories.
     """
-    #: List of path components from root
-    path: Path
-    #: Size of file
-    size: int
-
-
-def list_file_sizes(histories: Sequence[History]) -> list[FileSize]:
-    """Obtains file paths and sizes based on the command histories.
-    """
-    file_sizes = []
+    file_sizes = {}
     working_dir = None
     for history in histories:
         match history.command.split():
@@ -88,12 +91,24 @@ def list_file_sizes(histories: Sequence[History]) -> list[FileSize]:
                         case [size, name]:
                             path = tuple(working_dir + [name])
                             size = int(size)
-                            file_sizes.append(FileSize(path=path, size=size))
+                            file_sizes[path] = size
                         case _:
                             raise ValueError(f"cannot parse history result: {result}")
             case _:
                 raise ValueError(f"cannot parse history command: {history.command}")
-    return sorted(file_sizes, key=operator.attrgetter('path'))
+    return file_sizes
+
+
+def compute_dir_sizes(file_sizes: Mapping[Path, int]) -> collections.defaultdict[Path, int]:
+    """Computes the mapping of container directories to their sizes
+    based on the files sizes information.
+    """
+    dir_sizes = collections.defaultdict(int)
+    for path, size in file_sizes.items():
+        while path:
+            path = path[:-1]
+            dir_sizes[path] += size
+    return dir_sizes
 
 
 if __name__ == '__main__':
