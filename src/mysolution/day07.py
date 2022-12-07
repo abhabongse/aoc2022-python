@@ -18,11 +18,11 @@ def program(input_file):
     with open_input_file(input_file) as fobj:
         datastream = read_input(fobj)
 
-    # Part 1: Find the location of the first marker of length 4
+    # Part 1:
     p1_first_marker = find_first_marker(datastream, marker_length=4)
     print("Part 1:", p1_first_marker)
 
-    # Part 2: Find the location of the first marker of length 14
+    # Part 2:
     p2_first_marker = find_first_marker(datastream, marker_length=14)
     print("Part 2:", p2_first_marker)
 
