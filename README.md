@@ -2,6 +2,9 @@
 
 Attempts to solve problems at [Advent of Code 2022](https://adventofcode.com/2022) mostly using Python 3.11
 
+> **Warning**
+> This project is abandoned in favor for [solutions in Kotlin](https://github.com/abhabongse/aoc2022-kotlin).
+
 ## How to Run Scripts
 
 The easiest way to set up a run-time environment in the local machine is to
