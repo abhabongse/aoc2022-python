@@ -3,7 +3,7 @@
 Attempts to solve problems at [Advent of Code 2022](https://adventofcode.com/2022) mostly using Python 3.11
 
 > **Warning**
-> This project is abandoned in favor for [solutions in Kotlin](https://github.com/abhabongse/aoc2022-kotlin).
+> This project is abandoned in favor for [solutions in TypeScript](https://github.com/abhabongse/aoc2022-ts).
 
 ## How to Run Scripts
 
